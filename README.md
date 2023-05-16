@@ -1,5 +1,4 @@
-# Hadoop-Tool-Installation
-Easy executable bash files
+# Running executable files
 
 To execute a bash file, download these bash files (extension named as .sh).
 Navigate terminal to that location of the .sh files.
