@@ -161,7 +161,7 @@ do
             sudo rm $scala_foldername.tgz
             echo "COPY OF SCALA.TGZ DELETED. CONTINUING"
         else
-            echo "JETBRAINS TOOLS FILE NOT FOUND TO DELETE. CONTINUING"
+            echo "SCALA.TGZ FILE NOT FOUND TO DELETE. CONTINUING"
         fi
         cd ~
 
