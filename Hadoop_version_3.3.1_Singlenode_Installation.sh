@@ -48,10 +48,27 @@ done
 cd ~
 #-------------------------
 
+
 #INSTALLING JAVA
 #------------------------------
-sudo apt -y install openjdk-8-jdk
+while true
+do
+    echo "Want to install java-8 (recommended)? ((y)es / (n)o)"
+	read answer
+    if [ "$answer" == "yes" ] || [ "$answer" == "y" ]; then
+        sudo apt -y install openjdk-8-jdk
+        break
+
+    elif [ "$answer" == "no" ] || [ "$answer" == "n" ]; then
+        echo "SKIPPING..."
+        break
+
+    else
+        echo "Retry again"
+    fi
+done
 #------------------------------
+
 
 #CHOOSING USER
 #-------------------------------------------------
@@ -97,7 +114,17 @@ hadoop_foldername="hadoop-$hadoop_version"
 
 #DOWNLOADING HADOOP FROM https://hadoop.apache.org/releases.html and extract to ~
 #-----------------------------------------------------------------
-sudo rm ~/Downloads/$hadoop_foldername.tar.gz
+
+
+cd ~/Downloads
+if [ $(find -maxdepth 1 | grep $hadoop_foldername.tar.gz) ]; then
+    sudo rm $hadoop_foldername.tar.gz
+    echo "COPY OF HADOOP.TAR.GZ DELETED. CONTINUING"
+else
+    echo "HADOOP.TAR.GZ FILE NOT FOUND TO DELETE. CONTINUING"
+fi
+cd ~
+
 wget -P ~/Downloads https://dlcdn.apache.org/hadoop/common/$hadoop_foldername/$hadoop_foldername.tar.gz
 tar -zxvf ~/Downloads/$hadoop_foldername.tar.gz
 #-----------------------------------------------------------------
@@ -137,7 +164,22 @@ $line10" >> "$file1"
 
 #INSTALLING SSH
 #------------------------
-sudo apt-get -y install ssh
+while true
+do
+    echo "Want to install ssh (recommended)? ((y)es / (n)o)"
+	read answer
+    if [ "$answer" == "yes" ] || [ "$answer" == "y" ]; then
+        sudo apt-get -y install ssh
+        break
+
+    elif [ "$answer" == "no" ] || [ "$answer" == "n" ]; then
+        echo "SKIPPING..."
+        break
+
+    else
+        echo "Retry again"
+    fi
+done
 #------------------------
 
 
@@ -402,7 +444,15 @@ do
     echo "Want to cleanup? ((y)es / (n)o)"
 	read answer
     if [ "$answer" == "yes" ] || [ "$answer" == "y" ]; then
-        sudo rm ~/Downloads/$hadoop_foldername.tar.gz
+        cd ~/Downloads
+        if [ $(find -maxdepth 1 | grep $hadoop_foldername.tar.gz) ]; then
+            sudo rm $hadoop_foldername.tar.gz
+            echo "COPY OF HADOOP.TAR.GZ DELETED. CONTINUING"
+        else
+            echo "HADOOP.TAR.GZ FILE NOT FOUND TO DELETE. CONTINUING"
+        fi
+        cd ~
+
         break
 
     elif [ "$answer" == "no" ] || [ "$answer" == "n" ]; then
