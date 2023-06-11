@@ -33,7 +33,21 @@ do
     echo "Want to update and upgrade (recommended)? ((y)es / (n)o) NOTE: current user is $username"
 	read answer
     if [ "$answer" == "yes" ] || [ "$answer" == "y" ]; then
-        sudo apt update && sudo apt upgrade
+        while true; do
+            if sudo apt update; then
+                echo "UPDATED"
+                break
+            fi
+            echo "FAILED UPDATE, RETRYING"
+        done
+        
+        while true; do
+            if sudo apt upgrade; then
+                echo "UPGRADED"
+                break
+            fi
+            echo "FAILED UPGRADE, RETRYING"
+        done
         break
 
     elif [ "$answer" == "no" ] || [ "$answer" == "n" ]; then
@@ -49,7 +63,7 @@ done
 
 #GOING TO DEFAULT LOCATION
 #-------------------------
-cd ~
+cd /home/$username/
 #-------------------------
 
 #INSTALLING JAVA
@@ -111,24 +125,24 @@ do
 done
 #-------------------------------------------------
 
-#DOWNLOADING SCALA FROM https://dlcdn.apache.org/spark/ go into https://dlcdn.apache.org/spark/spark-3.3.2/spark-3.3.2-bin-hadoop3.tgz and extract to ~
+#DOWNLOADING SPARK FROM https://dlcdn.apache.org/spark/ go into https://dlcdn.apache.org/spark/spark-3.3.2/spark-3.3.2-bin-hadoop3.tgz and extract to ~
 #-------------------------------------------------
 spark_version='3.3.2'
 spark_foldername="spark-$spark_version"
 hadoop_version=3
 
-cd ~/Downloads
+cd /home/$username/Downloads
 if [ $(find -maxdepth 1 | grep $spark_foldername-bin-hadoop$hadoop_version.tgz) ]; then
     sudo rm $spark_foldername-bin-hadoop$hadoop_version.tgz
     echo "COPY OF SPARK.TGZ DELETED. CONTINUING"
 else
     echo "SPARK.TGZ FILE NOT FOUND TO DELETE. CONTINUING"
 fi
-cd ~
+cd /home/$username/
 
-wget -P ~/Downloads wget https://dlcdn.apache.org/spark/$spark_foldername/$spark_foldername-bin-hadoop$hadoop_version.tgz
+wget -P /home/$username/Downloads wget https://dlcdn.apache.org/spark/$spark_foldername/$spark_foldername-bin-hadoop$hadoop_version.tgz
 
-tar -zxvf ~/Downloads/$spark_foldername-bin-hadoop$hadoop_version.tgz
+tar -zxvf /home/$username/Downloads/$spark_foldername-bin-hadoop$hadoop_version.tgz
 #-------------------------------------------------
 
 
@@ -149,7 +163,7 @@ else
 fi
 
 
-# SCALA HOME SETUP :
+# SPARK HOME SETUP :
 line2="export SPARK_EXAMPLES_JAR=/home/$username/$spark_foldername-bin-hadoop$hadoop_version/examples/jars/spark-examples_2.12-3.3.1.jar"
 line3="export SPARK_HOME=/home/$username/$spark_foldername-bin-hadoop$hadoop_version"
 line4="export PATH=\$PATH:/home/$username/$spark_foldername-bin-hadoop$hadoop_version/bin"
@@ -168,7 +182,7 @@ do
     echo "Want to cleanup? ((y)es / (n)o)"
 	read answer
     if [ "$answer" == "yes" ] || [ "$answer" == "y" ]; then
-        sudo rm ~/Downloads/$spark_foldername-bin-hadoop$hadoop_version.tgz
+        sudo rm /home/$username/Downloads/$spark_foldername-bin-hadoop$hadoop_version.tgz
         break
 
     elif [ "$answer" == "no" ] || [ "$answer" == "n" ]; then
@@ -186,7 +200,7 @@ done
 #-----------------------------------
 while true
 do
-    echo "Want to restart (recommended to restart, if not then restart it yourself before starting up the scala services)? ((y)es / (n)o)"
+    echo "Want to restart (recommended to restart, if not then restart it yourself before starting up the spark services)? ((y)es / (n)o)"
 	read answer
     if [ "$answer" == "yes" ] || [ "$answer" == "y" ]; then
         sudo reboot
