@@ -30,7 +30,21 @@ do
     echo "Want to update and upgrade (recommended)? ((y)es / (n)o) NOTE: current user is $username"
 	read answer
     if [ "$answer" == "yes" ] || [ "$answer" == "y" ]; then
-        sudo apt update && sudo apt upgrade
+        while true; do
+            if sudo apt update; then
+                echo "UPDATED"
+                break
+            fi
+            echo "FAILED UPDATE, RETRYING"
+        done
+        
+        while true; do
+            if sudo apt upgrade; then
+                echo "UPGRADED"
+                break
+            fi
+            echo "FAILED UPGRADE, RETRYING"
+        done
         break
 
     elif [ "$answer" == "no" ] || [ "$answer" == "n" ]; then
@@ -45,7 +59,7 @@ done
 
 #GOING TO DEFAULT LOCATION
 #-------------------------
-cd ~
+cd /home/$username/
 #-------------------------
 
 
@@ -116,17 +130,20 @@ hadoop_foldername="hadoop-$hadoop_version"
 #-----------------------------------------------------------------
 
 
-cd ~/Downloads
+cd /home/$username/Downloads
 if [ $(find -maxdepth 1 | grep $hadoop_foldername.tar.gz) ]; then
     sudo rm $hadoop_foldername.tar.gz
     echo "COPY OF HADOOP.TAR.GZ DELETED. CONTINUING"
 else
     echo "HADOOP.TAR.GZ FILE NOT FOUND TO DELETE. CONTINUING"
 fi
-cd ~
+cd /home/$username/Downloads
 
-wget -P ~/Downloads https://dlcdn.apache.org/hadoop/common/$hadoop_foldername/$hadoop_foldername.tar.gz
-tar -zxvf ~/Downloads/$hadoop_foldername.tar.gz
+wget https://dlcdn.apache.org/hadoop/common/$hadoop_foldername/$hadoop_foldername.tar.gz
+
+cd /home/$username/
+
+tar -zxvf /home/$username/Downloads/$hadoop_foldername.tar.gz
 #-----------------------------------------------------------------
 
 
@@ -139,7 +156,7 @@ file1=".bashrc"
 line1="export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64"
 
 # HADOOP HOME SETUP :
-line2="export HADOOP_HOME=~/$hadoop_foldername/"
+line2="export HADOOP_HOME=/home/$username/$hadoop_foldername/"
 line3="export HADOOP_INSTALL=\$HADOOP_HOME"
 line4="export HADOOP_MAPRED_HOME=\$HADOOP_HOME"
 line5="export HADOOP_COMMON_HOME=\$HADOOP_HOME"
@@ -185,7 +202,7 @@ done
 
 #CHANGING SOME XML FILES
 #-----------------------------------------------------------------------
-cd ~/$hadoop_foldername/etc/hadoop
+cd /home/$username/$hadoop_foldername/etc/hadoop
 
 #1. HADOOP-EVN.SH
 #----------------------------------------
@@ -251,12 +268,12 @@ $line37
 $line38" > "$file3"
 #----------------------------------------
 
-cd ~/$hadoop_foldername
+cd /home/$username/$hadoop_foldername
 mkdir hadoop_data_namenode_datanode
 mkdir hadoop_data_namenode_datanode/namenode
 mkdir hadoop_data_namenode_datanode/datanode
 
-cd ~/$hadoop_foldername/etc/hadoop
+cd /home/$username/$hadoop_foldername/etc/hadoop
 
 #3. HDFS-SITE.XML
 #----------------------------------------
@@ -425,12 +442,12 @@ $line83" > "$file6"
 
 #SSH-connection SETUP FOR LOCALHOST
 #---------------------------------------
-cd ~
+cd /home/$username/
 
 $hadoop_foldername/bin/hdfs namenode -format
 
-cd ~/.ssh
-ssh-keygen -t ed25519 -C "loalhost connection of hadoop" -f ~/.ssh/hadoop_localhost_connect -N ""
+cd /home/$username/.ssh
+ssh-keygen -t ed25519 -C "loalhost connection of hadoop" -f /home/$username/.ssh/hadoop_localhost_connect -N ""
 
 ssh-copy-id -i hadoop_localhost_connect.pub -o StrictHostKeyChecking=no localhost
 #---------------------------------------
@@ -444,14 +461,14 @@ do
     echo "Want to cleanup? ((y)es / (n)o)"
 	read answer
     if [ "$answer" == "yes" ] || [ "$answer" == "y" ]; then
-        cd ~/Downloads
+        cd /home/$username/Downloads
         if [ $(find -maxdepth 1 | grep $hadoop_foldername.tar.gz) ]; then
             sudo rm $hadoop_foldername.tar.gz
             echo "COPY OF HADOOP.TAR.GZ DELETED. CONTINUING"
         else
             echo "HADOOP.TAR.GZ FILE NOT FOUND TO DELETE. CONTINUING"
         fi
-        cd ~
+        cd /home/$username/
 
         break
 
