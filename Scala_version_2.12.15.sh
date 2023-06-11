@@ -36,7 +36,21 @@ do
     echo "Want to update and upgrade (recommended)? ((y)es / (n)o) NOTE: current user is $username"
 	read answer
     if [ "$answer" == "yes" ] || [ "$answer" == "y" ]; then
-        sudo apt update && sudo apt upgrade
+        while true; do
+            if sudo apt update; then
+                echo "UPDATED"
+                break
+            fi
+            echo "FAILED UPDATE, RETRYING"
+        done
+        
+        while true; do
+            if sudo apt upgrade; then
+                echo "UPGRADED"
+                break
+            fi
+            echo "FAILED UPGRADE, RETRYING"
+        done
         break
 
     elif [ "$answer" == "no" ] || [ "$answer" == "n" ]; then
@@ -52,7 +66,7 @@ done
 
 #GOING TO DEFAULT LOCATION
 #-------------------------
-cd ~
+cd /home/$username/
 #-------------------------
 
 #INSTALLING JAVA
@@ -131,18 +145,18 @@ do
 	read installation_method
     if [ "$installation_method" == "1" ]; then
 
-        cd ~/Downloads
+        cd /home/$username/Downloads
         if [ $(find -maxdepth 1 | grep $scala_foldername.deb) ]; then
             sudo rm $scala_foldername.deb
             echo "COPY OF SCALA.DEB DELETED. CONTINUING"
         else
             echo "SCALA.DEB FILE NOT FOUND TO DELETE. CONTINUING"
         fi
-        cd ~
+        cd /home/$username/
 
         
-		wget -P ~/Downloads https://downloads.lightbend.com/scala/$scala_version/$scala_foldername.deb
-		sudo apt install ~/Downloads/$scala_foldername.deb
+		wget -P /home/$username/Downloads https://downloads.lightbend.com/scala/$scala_version/$scala_foldername.deb
+		sudo apt install /home/$username/Downloads/$scala_foldername.deb
         break
 
     elif [ "$installation_method" == "2" ]; then
@@ -156,18 +170,18 @@ do
         
     elif [ "$installation_method" == "3" ]; then
 
-        cd ~/Downloads
+        cd /home/$username/Downloads
         if [ $(find -maxdepth 1 | grep $scala_foldername.tgz) ]; then
             sudo rm $scala_foldername.tgz
             echo "COPY OF SCALA.TGZ DELETED. CONTINUING"
         else
-            echo "SCALA.TGZ FILE NOT FOUND TO DELETE. CONTINUING"
+            echo "JETBRAINS TOOLS FILE NOT FOUND TO DELETE. CONTINUING"
         fi
-        cd ~
+        cd /home/$username/
 
         
-        wget -P ~/Downloads https://downloads.lightbend.com/scala/$scala_version/$scala_foldername.tgz
-        tar -zxvf ~/Downloads/$scala_foldername.tgz
+        wget -P /home/$username/Downloads https://downloads.lightbend.com/scala/$scala_version/$scala_foldername.tgz
+        tar -zxvf /home/$username/Downloads/$scala_foldername.tgz
 		break
         
     else
@@ -181,7 +195,7 @@ done
 
 #GOING TO DEFAULT LOCATION
 #-------------------------
-cd ~
+cd /home/$username/
 #-------------------------
 
 
@@ -193,21 +207,21 @@ do
 	read answer
     if [ "$answer" == "yes" ] || [ "$answer" == "y" ]; then
 
-        cd ~/Downloads
+        cd /home/$username/Downloads
         if [ $(find -maxdepth 1 | grep eclipse-inst-jre-linux) ]; then
             sudo rm eclipse-inst-jre-linux64.tar.gz
             echo "COPY OF ECLIPSE TOOLS DELETED. CONTINUING"
         else
             echo "ECLIPSE FILE NOT FOUND TO DELETE. CONTINUING"
         fi
-        cd ~
+        cd /home/$username/
 
         firefox https://www.eclipse.org/downloads/download.php?file=/oomph/epp/2023-03/R/eclipse-inst-jre-linux64.tar.gz\&mirror_id\=1135
 
         echo "WARNING, WAIT FOR THE FILE TO BE FULLY DOWNLOADED BEFORE YOU HIT ANY KEY"
         read answer
 
-        tar -zxvf ~/Downloads/eclipse-inst-jre-linux64.tar.gz
+        tar -zxvf /home/$username/Downloads/eclipse-inst-jre-linux64.tar.gz
 
         break
 
@@ -229,21 +243,21 @@ do
     echo "Want to install jetbrains toolbox (to install intellij)? ((y)es / (n)o)"
 	read answer
     if [ "$answer" == "yes" ] || [ "$answer" == "y" ]; then
-        cd ~/Downloads
+        cd /home/$username/Downloads
         if [ $(find -maxdepth 1 | grep jetbrains-toolbox) ]; then
             sudo rm jetbrains-toolbox-1.28.1.15219.tar.gz
             echo "COPY OF JETBRAINS TOOLS DELETED. CONTINUING"
         else
             echo "JETBRAINS TOOLS FILE NOT FOUND TO DELETE. CONTINUING"
         fi
-        cd ~
+        cd /home/$username/
 
         firefox https://www.jetbrains.com/toolbox-app/download/download-thanks.html?platform=linux
 
         echo "WARNING, WAIT FOR THE FILE TO BE FULLY DOWNLOADED BEFORE YOU HIT ANY KEY"
         read answer
 
-        tar -zxvf ~/Downloads/jetbrains-toolbox-1.28.1.15219.tar.gz
+        tar -zxvf /home/$username/Downloads/jetbrains-toolbox-1.28.1.15219.tar.gz
 
         break
 
@@ -278,7 +292,7 @@ fi
 
 if [ "$installation_method" == 3 ]; then    #this means with the binary so we need to fill out bashrc
     # SCALA HOME SETUP :
-    line2="export SCALA_HOME=~/$scala_foldername/"
+    line2="export SCALA_HOME=/home/$username/$scala_foldername/"
     line3="export PATH=\$PATH:\$SCALA_HOME/bin"
 
     echo "$line2
@@ -297,7 +311,7 @@ do
 	read answer
     if [ "$answer" == "yes" ] || [ "$answer" == "y" ]; then
 
-        cd ~/Downloads
+        cd /home/$username/Downloads
 
         if [ $(find -maxdepth 1 | grep $scala_foldername.deb) ]; then
             sudo rm $scala_foldername.deb
@@ -327,7 +341,7 @@ do
             echo "JETBRAINS-TOOLBOX FILE NOT FOUND TO DELETE. CONTINUING"
         fi
         
-        cd ~
+        cd /home/$username/
 
         break
 
