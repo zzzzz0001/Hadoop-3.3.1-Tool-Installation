@@ -447,9 +447,18 @@ cd /home/$username/
 $hadoop_foldername/bin/hdfs namenode -format
 
 cd /home/$username/.ssh
-ssh-keygen -t ed25519 -C "loalhost connection of hadoop" -f /home/$username/.ssh/hadoop_localhost_connect -N ""
+ssh-keygen -t ed25519 -C "localhost connection of hadoop" -f /home/$username/.ssh/hadoop_localhost_connect -N ""
 
 ssh-copy-id -i hadoop_localhost_connect.pub -o StrictHostKeyChecking=no localhost
+
+if [ $(find -maxdepth 1 | grep config) ]; then
+        sudo mv config old_config_data
+        echo 'CONFIG FILE OF SSH HAS BEEN RENAMED TO "old_config_data" and new config file is being created to avoid conflicts'
+fi
+
+echo "CREATING CONFIG FILE FOR SSH"
+touch config
+echo "IdentityFile /home/$username/.ssh/hadoop_localhost_connect" > config
 #---------------------------------------
 
 
